@@ -1,0 +1,61 @@
+app:
+  name: "metric-index"
+  port: 7001
+
+log:
+  level: "info"
+  filename: "logs/metric-index.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: root
+  password: root
+  dbname: "metric-index"
+  max_open_conns: 200
+  max_idel_conns: 50
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 100
+
+metric_store:
+  cache:
+    isexpire: true
+    expire: 604800
+    dist_interval: 345600
+    default_expire: 1800
+    cleanup_interval: 60
+    worker_num: 10
+    flush_lens: 1000
+    fulsh_interval: 3
+  producer:
+    hosts:
+      - metric-index-001:9092
+      - metric-index-002:9092
+      - metric-index-003:9092
+    topic: "metric-index"
+  consummer:
+    hosts:
+      - metric-index-001:9092
+      - metric-index-002:9092
+      - metric-index-003:9092
+    topics:
+      - "metric-index"
+    group_id: metric-index-worker-v1
+    work_num: 8
+    offset_type: oldest
+
+remote:
+  write:
+    url: "http://127.0.0.1:8428/api/v1/write"
+    content_type: "application/x-protobuf"
+  send:
+    url: "http://127.0.0.1:8428/api/put"
+    content_type: "application/json"
