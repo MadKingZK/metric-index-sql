@@ -1,9 +1,6 @@
 node('master') {
     def root = tool type: 'go', name: 'go15'
-
-    stage('Perparation git') {
-        git 'https://github.com/MadKingZK/metric-index-sql.git'
-    }
+    
     // Export environment variables pointing to the directory where Go was installed
     stage('meke Env & Build') {
         withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
